@@ -55,13 +55,13 @@ func putHandler (w http.ResponseWriter, r *http.Request, params map[string]strin
 	response.Message = "OK";
 
 	go func() {
-		_ := db.Put(params)
-
+		err := db.Put(params)
+		if (err != nil) {
+			response.Code = http.StatusInternalServerError
+			response.Message = err.Error()
+		}
 	}()
-	/*if (err != nil) {
-		response.Code = http.StatusInternalServerError
-		response.Message = err.Error()
-	}*/
+
 	makeResp(w ,r ,response)
 }
 

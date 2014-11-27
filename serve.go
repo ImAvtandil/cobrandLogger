@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"log"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 )
 
 type Resp struct {
@@ -15,14 +17,16 @@ type Resp struct {
 	Data map[string]string
 }
 
+const CoobUrl = "http://cobrand.ria.com"
+
 func main() {
 	http.HandleFunc("/put", mainHandler(putHandler));
 	http.HandleFunc("/get", mainHandler(getHandler));
+	http.HandleFunc("/getter", mainHandler(getterHandler));
 
 	s := &http.Server{
 		Addr:           ":8082",
-		//Handler:        Handle,
-		ReadTimeout:    120 * time.Second,
+		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
@@ -31,7 +35,7 @@ func main() {
 }
 
 func mainHandler (fn func(http.ResponseWriter, *http.Request, map[string]string)) http.HandlerFunc {
-	var validPath = regexp.MustCompile("^/(put|get)")
+	var validPath = regexp.MustCompile("^/(put|get|getter)")
 	return func(w http.ResponseWriter, r *http.Request) {
 		mess := validPath.FindStringSubmatch(r.URL.Path)
 		if mess == nil {
@@ -78,6 +82,40 @@ func getHandler (w http.ResponseWriter, r *http.Request, params map[string]strin
 	}
 	response.Data = data;
 	makeResp(w ,r ,response)
+}
+
+func getterHandler (w http.ResponseWriter, r *http.Request, params map[string]string) {
+	response := Resp{}
+	response.Code = 200;
+	response.Message = "OK";
+
+	// PUT VISIT DATA
+	go func() {
+		var client_type string = "2";
+		if (params["client_type"] != "") {
+			client_type = params["client_type"];
+		}
+		visitParams := map[string]string{"client_id":params["key"], "client_type":client_type}
+		err := db.Put(visitParams)
+		if (err != nil) {
+			log.Print(err)
+		}
+	}()
+	// END
+
+	resp, err := http.Get(fmt.Sprintf("%s/service/get/findinformer?key=%s", CoobUrl, params["key"]))
+	if (err != nil) {
+		response.Code = http.StatusInternalServerError
+		response.Message = err.Error()
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	w.Header().Set("Access-Control-Allow-Headers", "authorization")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+	w.Write(body);
 }
 
 func makeResp(w http.ResponseWriter, r *http.Request, data Resp) {

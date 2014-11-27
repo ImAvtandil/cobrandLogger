@@ -55,7 +55,8 @@ func putHandler (w http.ResponseWriter, r *http.Request, params map[string]strin
 	response.Message = "OK";
 
 	go func() {
-		db.Put(params)
+		_ := db.Put(params)
+
 	}()
 	/*if (err != nil) {
 		response.Code = http.StatusInternalServerError

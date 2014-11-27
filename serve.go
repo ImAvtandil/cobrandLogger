@@ -52,7 +52,7 @@ func mainHandler (fn func(http.ResponseWriter, *http.Request, map[string]string)
 func putHandler (w http.ResponseWriter, r *http.Request, params map[string]string) {
 	response := Resp{}
 	response.Code = 200;
-	response.Message = "OKedoke";
+	response.Message = "OK";
 
 	err := db.Put(params)
 	if (err != nil) {

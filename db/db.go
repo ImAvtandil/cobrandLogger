@@ -40,7 +40,7 @@ func Put(params map[string]string) error{
 
 	defer session.Close()
 	
-	clientId, err := strconv.ParseInt(params["client_id"], 10, 64)
+	//clientId, err := strconv.ParseInt(params["client_id"], 10, 64)
 	clientType, err := strconv.ParseInt(params["client_type"], 10, 64)
 	if (err != nil) {
 		return err
@@ -57,7 +57,7 @@ func Put(params map[string]string) error{
  							WHERE client_id=?
  							AND client_type=?
  							AND time=?`,
-		clientId, clientType, timestamp).Exec(); err != nil {
+		params["client_id"], clientType, timestamp).Exec(); err != nil {
 		return err
 	}
 
@@ -92,7 +92,7 @@ func Get(params map[string]string) (map[string]string, error) {
 		return result, err
 	}
 
-	clientId, err := strconv.ParseInt(params["client_id"], 10, 64)
+	//clientId, err := strconv.ParseInt(params["client_id"], 10, 64)
 	clientType, err := strconv.ParseInt(params["client_type"], 10, 64)
 	if (err != nil) {
 		return result, err
@@ -102,7 +102,7 @@ func Get(params map[string]string) (map[string]string, error) {
 	fromMas := strings.Split(fmt.Sprintf("%s", from), " EET")
 	toMas := strings.Split(fmt.Sprintf("%s", to), " EET")
 	//fmt.Printf("%v - %v", from, to)
-	query := fmt.Sprintf("SELECT client_id, client_type, time, count FROM cobrand_count WHERE client_id=%d	AND client_type=%d 	AND time >= '%s' AND time <= '%s'", clientId, clientType, fromMas[0], toMas[0])
+	query := fmt.Sprintf("SELECT client_id, client_type, time, count FROM cobrand_count WHERE client_id=%d	AND client_type=%d 	AND time >= '%s' AND time <= '%s'", params["client_id"], clientType, fromMas[0], toMas[0])
 	fmt.Printf("%s", query)
 	iter := session.Query(query).Iter()
 

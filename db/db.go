@@ -118,11 +118,11 @@ func Get(params map[string]string) (map[string]map[string]string, error) {
 
 	// create concurrent queries
 	//var counter int = 0
-	row := make(map[string]string)
+
 	//go func(){
 	for iter.Scan(&cid, &ctype, &ctime, &ccount) {
 		//time := timedata;
-
+		row := make(map[string]string)
 		day := ctime.Format(time.RFC3339)
 		dayTime := strings.Split(day, "T")
 		//res := Row{cid, ctype, fmt.Sprintf("%s", dayTime[0]), ccount}

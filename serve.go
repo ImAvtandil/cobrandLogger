@@ -91,12 +91,6 @@ func getHandler (w http.ResponseWriter, r *http.Request, params map[string]strin
 		response.Message = err.Error()
 	}
 
-	/*result := make(map[string]map[string]string)
-
-	decoder := schema.NewDecoder()
-	err = decoder.Decode(data, result)
-	//Reparse(data)
-	fmt.Printf("%v", result)*/
 	response.Data = data;
 	makeResp(w ,r ,response)
 }

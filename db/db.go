@@ -11,8 +11,8 @@ import (
 
 var (
 	Servers = []string{"10.1.51.65","10.1.51.66"}
-	//Keyspace string = "counterks"
-	Keyspace string = "cobrand"
+	Keyspace string = "counterks"
+	//Keyspace string = "cobrand"
 )
 
 const TimeShortForm = "2006-10-02"
@@ -34,8 +34,8 @@ func Put(params map[string]string) error{
 		return errors.New("param: clientType is empty!")
 	}
 
-	cluster := gocql.NewCluster("10.1.18.122")
-	//cluster := gocql.NewCluster("10.1.51.65","10.1.51.66")
+	//cluster := gocql.NewCluster("10.1.18.122")
+	cluster := gocql.NewCluster("10.1.51.65","10.1.51.66")
 	cluster.Keyspace = Keyspace
 	cluster.Consistency = gocql.One
 	session, _ := cluster.CreateSession()
@@ -72,7 +72,7 @@ func Get(params map[string]string) (map[string]map[string]string, error) {
 		err error
 		neededParams = []string{"client_id", "client_type", "from", "to"}
 	)
-	cluster := gocql.NewCluster("10.1.18.122")
+	cluster := gocql.NewCluster("10.1.51.65","10.1.51.66")
 	cluster.Keyspace = Keyspace
 	cluster.Consistency = gocql.One
 	session, _ := cluster.CreateSession()

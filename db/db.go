@@ -11,14 +11,15 @@ import (
 
 var (
 	Servers = []string{"10.1.51.65","10.1.51.66"}
-	Keyspace string = "counterks"
+	//Keyspace string = "counterks"
+	Keyspace string = "cobrand"
 )
 
-const TimeShortForm = "2006-Nov-02"
+const TimeShortForm = "2006-10-02"
 
 type Row struct {
 	Client_id string
-	Client_type string
+	Client_type int
 	Time string
 	Count int
 }
@@ -33,7 +34,8 @@ func Put(params map[string]string) error{
 		return errors.New("param: clientType is empty!")
 	}
 
-	cluster := gocql.NewCluster("10.1.51.65","10.1.51.66")
+	cluster := gocql.NewCluster("10.1.18.122")
+	//cluster := gocql.NewCluster("10.1.51.65","10.1.51.66")
 	cluster.Keyspace = Keyspace
 	cluster.Consistency = gocql.One
 	session, _ := cluster.CreateSession()
@@ -64,15 +66,15 @@ func Put(params map[string]string) error{
 	return err
 }
 
-func Get(params map[string]string) (map[string]string, error) {
+func Get(params map[string]string) (map[string]map[string]string, error) {
+	result := make(map[string]map[string]string)
 	var (
-		result map[string]string
 		err error
 		neededParams = []string{"client_id", "client_type", "from", "to"}
 	)
 	cluster := gocql.NewCluster("10.1.18.122")
 	cluster.Keyspace = Keyspace
-	//cluster.Consistency = gocql.One
+	cluster.Consistency = gocql.One
 	session, _ := cluster.CreateSession()
 	for _, param := range neededParams {
 		if(params[param] == "") {
@@ -81,13 +83,14 @@ func Get(params map[string]string) (map[string]string, error) {
 		}
 	}
 
-	//fmt.Printf("%v", params)
 
+	fromT := fmt.Sprintf("%sT00:00:00Z", params["from"])
+	toT := fmt.Sprintf("%sT00:00:00Z", params["to"])
 
 	location, _ := time.LoadLocation("Europe/Kiev")
-	from, err := time.ParseInLocation(TimeShortForm, fmt.Sprintf("%s", params["from"]), location)
-	to, err := time.ParseInLocation(TimeShortForm, fmt.Sprintf("%s", params["to"]), location)
-	//fmt.Printf("%v - %v", from, to)
+	from, err := time.ParseInLocation(time.RFC3339, fromT, location)
+	to, err := time.ParseInLocation(time.RFC3339, toT, location)
+
 	if (err != nil) {
 		return result, err
 	}
@@ -98,42 +101,46 @@ func Get(params map[string]string) (map[string]string, error) {
 		return result, err
 	}
 
-	const timeFormat = "2012-01-03 00:00:00 +0200"
-	fromMas := strings.Split(fmt.Sprintf("%s", from), " EET")
-	toMas := strings.Split(fmt.Sprintf("%s", to), " EET")
-	//fmt.Printf("%v - %v", from, to)
-	query := fmt.Sprintf("SELECT client_id, client_type, time, count FROM cobrand_count WHERE client_id=%d	AND client_type=%d 	AND time >= '%s' AND time <= '%s'", params["client_id"], clientType, fromMas[0], toMas[0])
-	fmt.Printf("%s", query)
+	const timeFormat = "2012-01-03 00:00:00 +0200 UTC"
+	fromMas := strings.Split(fmt.Sprintf("%s", from), " UTC")
+	toMas := strings.Split(fmt.Sprintf("%s", to), " UTC")
+
+	query := fmt.Sprintf("SELECT client_id, client_type, time, count FROM cobrand_count WHERE client_id='%s' AND client_type=%d AND time >= '%s' AND time <= '%s'", params["client_id"], clientType, fromMas[0], toMas[0])
+
 	iter := session.Query(query).Iter()
 
 	//output := make(chan map[int]Row)
 	//row := Row{}
-	var cId,cType,cTime string
-	var cCount int
+	var cid string
+	var ccount,ctype int
+	var ctime time.Time;
 
 
-	response := make(map[int]Row)
 	// create concurrent queries
-	var counter int = 0
+	//var counter int = 0
+	row := make(map[string]string)
 	//go func(){
-		for iter.Scan(&cId, &cType, &cTime, &cCount) {
+	for iter.Scan(&cid, &ctype, &ctime, &ccount) {
+		//time := timedata;
 
-			//time := timedata;
-			//day := time.In(location).Format(dayform)
-			//dayTime := strings.Split(day, "Z")
-			res := Row{cId, cType, cTime, cCount}
-			fmt.Printf("%v", res)
-			response[counter] = res
-			counter++
-		}
+		day := ctime.Format(time.RFC3339)
+		dayTime := strings.Split(day, "T")
+		//res := Row{cid, ctype, fmt.Sprintf("%s", dayTime[0]), ccount}
+
+		row["client_id"] = cid
+		row["client_type"] = fmt.Sprintf("%d", ctype)
+		row["client_time"] = fmt.Sprintf("%s", dayTime[0])
+		row["client_count"] = fmt.Sprintf("%d", ccount)
+
+
+		result[row["client_time"]] = row
+
+	}
 
 		//output <- response
 	//}();
-
-	fmt.Printf("%v", response)
-
 	if err := iter.Close(); err != nil {
-		//log.Fatal(err)
+		return result, err
 	}
 
 	defer session.Close()

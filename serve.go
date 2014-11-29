@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/polluxx/cobrandLogger/db"
+	//"github.com/gorilla/schema"
 	"net/http"
 	"time"
 	"regexp"
@@ -9,12 +10,21 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	//"reflect"
+	//"strings"
 )
 
 type Resp struct {
 	Code int
 	Message string
-	Data map[string]string
+	Data map[string]map[string]string
+}
+
+type Row struct {
+	Client_id string
+	Client_type int
+	Time string
+	Count int
 }
 
 const CoobUrl = "http://cobrand.ria.com"
@@ -80,9 +90,17 @@ func getHandler (w http.ResponseWriter, r *http.Request, params map[string]strin
 		response.Code = http.StatusInternalServerError
 		response.Message = err.Error()
 	}
+
+	/*result := make(map[string]map[string]string)
+
+	decoder := schema.NewDecoder()
+	err = decoder.Decode(data, result)
+	//Reparse(data)
+	fmt.Printf("%v", result)*/
 	response.Data = data;
 	makeResp(w ,r ,response)
 }
+
 
 func getterHandler (w http.ResponseWriter, r *http.Request, params map[string]string) {
 	response := Resp{}

@@ -37,8 +37,11 @@ func Put(params map[string]string) error{
 	//cluster := gocql.NewCluster("10.1.18.122")
 	cluster := gocql.NewCluster("10.1.51.65","10.1.51.66")
 	cluster.Keyspace = Keyspace
-	cluster.Consistency = gocql.One
-	session, _ := cluster.CreateSession()
+	//cluster.Consistency = gocql.One
+	session, err := cluster.CreateSession()
+	if (err != nil) {
+		return err
+	}
 
 	defer session.Close()
 	

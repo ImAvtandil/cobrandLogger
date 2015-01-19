@@ -168,7 +168,9 @@ func Blocks(key string, blocktype string) (code string, err error){
 	//cluster := gocql.NewCluster("10.1.18.122")
 	cluster := gocql.NewCluster("10.1.51.65","10.1.51.66")
 
-	cluster.MaxPreparedStmts = 4000
+	cluster.NumConns = 3
+	cluster.NumStreams = 192
+	cluster.MaxPreparedStmts = 5000
 	cluster.Keyspace = KeyspaceBlock
 	sessionGet, _ := cluster.CreateSession()
 	defer sessionGet.Close()
@@ -177,7 +179,7 @@ func Blocks(key string, blocktype string) (code string, err error){
 	table := Types[blocktype]
 	//number of items
 	if err = sessionGet.Query(fmt.Sprintf("SELECT count FROM %s WHERE key = '%s'",
-		table, fmt.Sprintf("%s1",key))).Consistency(gocql.Quorum).RetryPolicy(&gocql.SimpleRetryPolicy{NumRetries: 1}).Scan(&count); err != nil {
+		table, fmt.Sprintf("%s1",key))).Consistency(gocql.Two).RetryPolicy(&gocql.SimpleRetryPolicy{NumRetries: 1}).Scan(&count); err != nil {
 		return
 	}
 

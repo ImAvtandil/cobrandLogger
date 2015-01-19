@@ -184,7 +184,11 @@ func Blocks(key string, blocktype string) (code string, err error){
 	}
 
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	newKey := fmt.Sprintf("%s%d", key, r.Intn(count))
+	randNum := r.Intn(count)
+	if (randNum == 0) {
+		randNum = 1
+	}
+	newKey := fmt.Sprintf("%s%d", key, randNum)
 	log.Print(newKey)
 
 	if err = sessionGet.Query(fmt.Sprintf("SELECT code FROM %s WHERE key = '%s'",

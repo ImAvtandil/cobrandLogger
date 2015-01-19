@@ -153,7 +153,7 @@ func Get(params map[string]string) (map[string]map[string]string, error) {
 }
 
 func Blocks(key string, blocktype string) (code string, err error){
-	//var code string
+	var count int
 
 	if (key == "") {
 		err = errors.New("param: key is empty!")
@@ -172,48 +172,33 @@ func Blocks(key string, blocktype string) (code string, err error){
 
 
 	table := Types[blocktype]
+	//number of items
+	if err = sessionGet.Query(fmt.Sprintf("SELECT count FROM %s WHERE key = '%s'",
+		table, key)).Consistency(gocql.Quorum).Scan(&count); err != nil {
+		return
+	}
 
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	newKey := fmt.Sprintf("%s%d", key, r.Int63n(20))
+	newKey := fmt.Sprintf("%s%d", key, r.Intn(count))
 	fmt.Print(newKey)
 
 	if err = sessionGet.Query(fmt.Sprintf("SELECT code FROM %s WHERE key = '%s'",
-		table, newKey)).Consistency(gocql.One).Scan(&code); err != nil {
-		//log.Fatal(err)
+		table, newKey)).Consistency(gocql.Quorum).Scan(&code); err != nil {
+		fmt.Print(err)
+		return
 	}
 
 
 	// SET COUNTER
 	if(code != "") {
 		go func() {
-
-			cluster.Keyspace = Keyspace
-			sessionSet, err := cluster.CreateSession()
-			defer sessionSet.Close()
-			clientType, err := strconv.ParseInt(blocktype, 10, 64)
-			if (err != nil) {
-				return
-			}
-
-			location, _ := time.LoadLocation("Europe/Kiev")
-			currentTime := time.Now()
-
-			timestamp := time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 0,0,0,0, location)
-
-			// insert data
-			if err := sessionSet.Query(`UPDATE cobrand_count
-							SET count = count + 1
- 							WHERE client_id=?
- 							AND client_type=?
- 							AND time=?`,
-				key, clientType, timestamp).Exec(); err != nil {
-				return
-			}
+			row := make(map[string]string)
+			row["client_type"] = blocktype
+			row["client_id"] = key
+			Put(row)
 		}()
 	}
 	// END
-
-
 
 	return
 }

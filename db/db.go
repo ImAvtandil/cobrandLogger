@@ -174,8 +174,12 @@ func Blocks(key string, blocktype string) (code string, err error){
 	table := Types[blocktype]
 	//number of items
 	if err = sessionGet.Query(fmt.Sprintf("SELECT count FROM %s WHERE key = '%s'",
-		table, key)).Consistency(gocql.Quorum).Scan(&count); err != nil {
+		table, fmt.Sprintf("%s1",key))).Consistency(gocql.Quorum).Scan(&count); err != nil {
 		return
+	}
+
+	if (count == 0) {
+		count = 20
 	}
 
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))

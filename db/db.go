@@ -189,7 +189,7 @@ func Blocks(key string, blocktype string) (code string, err error){
 		randNum = 1
 	}
 	newKey := fmt.Sprintf("%s%d", key, randNum)
-	log.Print(newKey)
+	//log.Print(newKey)
 
 	if err = sessionGet.Query(fmt.Sprintf("SELECT code FROM %s WHERE key = '%s'",
 		table, newKey)).Consistency(gocql.Quorum).Scan(&code); err != nil {

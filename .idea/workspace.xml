@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="5ebf931b-efed-4b47-9d19-19b67536a890" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db/db.go" afterPath="$PROJECT_DIR$/db/db.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <list id="0b2f9a9e-d6bd-4f45-b667-18b5efaf8ec3" name="idea" comment="idea" />
     <ignored path="cobrandLogger.iws" />
@@ -41,8 +42,8 @@
       <file leaf-file-name="db.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/db/db.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.22022839" vertical-offset="2520" max-vertical-offset="3315">
-              <caret line="177" column="118" selection-start-line="177" selection-start-column="118" selection-end-line="177" selection-end-column="118" />
+            <state vertical-scroll-proportion="0.41598696" vertical-offset="2295" max-vertical-offset="3345">
+              <caret line="170" column="35" selection-start-line="170" selection-start-column="35" selection-end-line="170" selection-end-column="35" />
               <folding />
             </state>
           </provider>
@@ -483,8 +484,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/db/db.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.22022839" vertical-offset="2520" max-vertical-offset="3315">
-          <caret line="177" column="118" selection-start-line="177" selection-start-column="118" selection-end-line="177" selection-end-column="118" />
+        <state vertical-scroll-proportion="0.41598696" vertical-offset="2295" max-vertical-offset="3345">
+          <caret line="170" column="35" selection-start-line="170" selection-start-column="35" selection-end-line="170" selection-end-column="35" />
           <folding />
         </state>
       </provider>

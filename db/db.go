@@ -168,9 +168,9 @@ func Blocks(key string, blocktype string) (code string, err error){
 	//cluster := gocql.NewCluster("10.1.18.122")
 	cluster := gocql.NewCluster("10.1.51.65","10.1.51.66")
 
-	cluster.NumConns = 3
-	cluster.NumStreams = 192
-	cluster.MaxPreparedStmts = 5000
+	cluster.NumConns = 1
+	cluster.NumStreams = 64
+	cluster.MaxPreparedStmts = 2000
 	cluster.Keyspace = KeyspaceBlock
 	sessionGet, _ := cluster.CreateSession()
 	defer sessionGet.Close()

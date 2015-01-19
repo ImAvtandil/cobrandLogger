@@ -41,8 +41,8 @@
       <file leaf-file-name="db.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/db/db.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.44045678" vertical-offset="2295" max-vertical-offset="3375">
-              <caret line="171" column="28" selection-start-line="171" selection-start-column="28" selection-end-line="171" selection-end-column="28" />
+            <state vertical-scroll-proportion="0.4649266" vertical-offset="2295" max-vertical-offset="3375">
+              <caret line="172" column="32" selection-start-line="172" selection-start-column="32" selection-end-line="172" selection-end-column="32" />
               <folding />
             </state>
           </provider>
@@ -483,8 +483,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/db/db.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.44045678" vertical-offset="2295" max-vertical-offset="3375">
-          <caret line="171" column="28" selection-start-line="171" selection-start-column="28" selection-end-line="171" selection-end-column="28" />
+        <state vertical-scroll-proportion="0.4649266" vertical-offset="2295" max-vertical-offset="3375">
+          <caret line="172" column="32" selection-start-line="172" selection-start-column="32" selection-end-line="172" selection-end-column="32" />
           <folding />
         </state>
       </provider>

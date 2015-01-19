@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"strings"
 	"math/rand"
+	"log"
 )
 
 var (
@@ -184,11 +185,12 @@ func Blocks(key string, blocktype string) (code string, err error){
 
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	newKey := fmt.Sprintf("%s%d", key, r.Intn(count))
-	fmt.Print(newKey)
+	log.Print(newKey)
 
 	if err = sessionGet.Query(fmt.Sprintf("SELECT code FROM %s WHERE key = '%s'",
 		table, newKey)).Consistency(gocql.Quorum).Scan(&code); err != nil {
-		fmt.Print(err)
+		log.Print(err)
+
 		return
 	}
 

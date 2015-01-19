@@ -175,7 +175,7 @@ func Blocks(key string, blocktype string) (code string, err error){
 	table := Types[blocktype]
 	//number of items
 	if err = sessionGet.Query(fmt.Sprintf("SELECT count FROM %s WHERE key = '%s'",
-		table, fmt.Sprintf("%s1",key))).Consistency(gocql.Quorum).Scan(&count); err != nil {
+		table, fmt.Sprintf("%s1",key))).Consistency(gocql.Quorum).RetryPolicy(&gocql.SimpleRetryPolicy{NumRetries: 1}).Scan(&count); err != nil {
 		return
 	}
 
@@ -191,8 +191,9 @@ func Blocks(key string, blocktype string) (code string, err error){
 	newKey := fmt.Sprintf("%s%d", key, randNum)
 	//log.Print(newKey)
 
+
 	if err = sessionGet.Query(fmt.Sprintf("SELECT code FROM %s WHERE key = '%s'",
-		table, newKey)).Consistency(gocql.Quorum).Scan(&code); err != nil {
+		table, newKey)).Consistency(gocql.Quorum).RetryPolicy(&gocql.SimpleRetryPolicy{NumRetries: 1}).Scan(&code); err != nil {
 		log.Print(err)
 
 		return

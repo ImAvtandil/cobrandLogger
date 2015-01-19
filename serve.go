@@ -134,7 +134,8 @@ func getterHandler (w http.ResponseWriter, r *http.Request, params map[string]st
 
 func blocksHandler (w http.ResponseWriter, r *http.Request, params map[string]string) {
 	if (params["client_type"] == "") {
-		writeResp(w, "client_type param is empty")
+		params["client_type"] = 2;
+		//writeResp(w, "client_type param is empty")
 	}
 
 	if (params["key"] == "") {
